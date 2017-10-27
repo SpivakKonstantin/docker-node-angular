@@ -1,0 +1,25 @@
+web:
+    build: ./docker/centos7-nginx
+    ports:
+        - "80:80"
+    volumes:
+        - ".:/var/www"
+        - "./docker/centos7-nginx/configs/site.conf:/etc/nginx/conf.d/site.conf"
+    links:
+        - node:node
+db:
+    image: postgres
+    ports:
+        - "5432:5432"
+    environment:
+        POSTGRES_PASSWORD: example
+
+node:
+    build: ./docker/node
+    volumes:
+      - "./backend:/src/app"
+    ports:
+      - "3000:3000"
+    command: nodemon -L app/bin/www
+    links:
+        - db
